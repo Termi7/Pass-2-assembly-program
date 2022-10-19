@@ -10,7 +10,57 @@ enum directives {
 // Add the following function to your existing Project 2 code
 int getByteWordValue(int directiveType, char* string)
 {
+	char buf[80];
+	switch (directiveType)
+	{
+	case BYTE:
+		/* code */
+
+		if(strchr(string, 'X')!=NULL){
+			 int c = strtol(string, NULL, 10);
+			 sprintf(buf,"%X", c);
+
+
+			return strtol(buf, NULL, 16);
+
+
+
+
+		}
+
+		if(strchr(string, 'C')!=NULL){
+			int count=0;
+			char val[80];
+
+					for(int x= 2; x<strlen(string);x++){
+
+						if(strcmp(&string[x],"'")!=0){
+							// count+=1;
+							strcat(val, string[x]);
+							// string[x];
+
+             
+						}
+						return val;
+					}
+
+
+		}
+		break;
 	
+
+
+	case WORD:
+		/* code */
+		int c = strtol(string, NULL, 10);
+		sprintf(buf,"%X", c);
+
+
+		return strtol(buf, NULL, 16);
+
+		break;
+	
+	}
 }
 
 int getMemoryAmount(int directiveType, char* string)
@@ -127,7 +177,13 @@ int getMemoryAmount(int directiveType, char* string)
 // Add the following function to your existing Project 2 code
 bool isDataDirective(int directiveType)
 {
-	
+	if(directiveType== 1 || directiveType==6){
+		return true;
+
+ }
+ else{
+	return false;
+ }
 }
 
 int isDirective(char* string) {
@@ -157,14 +213,26 @@ int isDirective(char* string) {
 // Add the following function to your existing Project 2 code
 bool isEndDirective(int directiveType)
 {
-	
+	if(directiveType== 2){
+		return true;
+
+ }
+ else{
+	return false;
+ }
 }
 
 // To implement Pass 2 of the assembler for Project 3,
 // Add the following function to your existing Project 2 code
 bool isReserveDirective(int directiveType)
 {
-	
+	if(directiveType== 3 || directiveType==4){
+		return true;
+
+ }
+ else{
+	return false;
+ }
 }
 
 bool isStartDirective(int directiveType)

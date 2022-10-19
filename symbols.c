@@ -41,9 +41,18 @@ void displaySymbolTable(struct symbol* symbolTable[])
 // Add the following function to your existing Project 2 code
 int getSymbolAddress(struct symbol* symbolArray[], char* string)
 {
-	
-}
+  int key1 =computeHash(string);
+	for (int b =0; b<SYMBOL_TABLE_SIZE; b+=1){
+		while(symbolArray){
+		if(strcmp(symbolArray[key1]->name, string)==0){
 
+			return symbolArray[key1]->address;
+		}
+		}
+		return -1;
+	}
+	return -1;
+}
 void initializeSymbolTable(struct symbol* symbolTable[])
 {
 	for(int i=0;i<SYMBOL_TABLE_SIZE; i++){
