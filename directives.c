@@ -11,38 +11,88 @@ enum directives {
 int getByteWordValue(int directiveType, char* string)
 {
 	char buf[80];
+	// printf("%s\n", string);
+		int c = 0;
 	switch (directiveType)
 	{
 	case BYTE:
 		/* code */
 
 		if(strchr(string, 'X')!=NULL){
-			 int c = strtol(string, NULL, 10);
-			 sprintf(buf,"%X", c);
+			//  long c = strtol(string, NULL, 16);
 
+				int number1;
+				char val1[10]="";
+			for(int x= 2; x<strlen(string);x++){
+						
 
-			return strtol(buf, NULL, 16);
+						if(strcmp(&string[x],"'")!=0){
 
+							// sprintf(hex, "%X", countV);
+							// printf("%s\n",hex);
 
+						 
+							
+							// count+=1;
+							strcat(val1, &string[x]);
+							// string[x];
+							 number1 = strtol(val1, NULL, 16);
+
+							
+
+							
+			
+		
+			// number1 = (int)strtol(string, NULL, 16);
+			// printf("%s\n", string);
+			// printf("%X", number1);
+			//  sprintf(buf,"%X", c);
+
+						}
+			return number1;
+
+						}
 
 
 		}
 
-		if(strchr(string, 'C')!=NULL){
-			int count=0;
-			char val[80];
+		else if(strchr(string, 'C')!=NULL){
+			int countV=0;
+			char val[10]="";
+			char hex[5];
+			int number;
+			
+			
 
 					for(int x= 2; x<strlen(string);x++){
+						
 
 						if(strcmp(&string[x],"'")!=0){
+							// printf("%X\n",atoi(&string[x]));
+							// printf("%C\n",string[x]);
+							countV = (string[x]);
+
+							
+
+							sprintf(hex, "%X", countV);
+							// printf("%s\n",hex);
+
+						 
+							
 							// count+=1;
-							strcat(val, string[x]);
+							strcat(val, hex);
 							// string[x];
+							 number = (int)strtol(val, NULL, 16);
 
              
 						}
-						return val;
+						
+						
+						
 					}
+						// printf("%s\n",val);
+					return number;
+				
 
 
 		}
@@ -52,15 +102,16 @@ int getByteWordValue(int directiveType, char* string)
 
 	case WORD:
 		/* code */
-		int c = strtol(string, NULL, 10);
+	
+		 c =strtol(string, NULL, 10);
 		sprintf(buf,"%X", c);
-
 
 		return strtol(buf, NULL, 16);
 
 		break;
 	
 	}
+	return-1;
 }
 
 int getMemoryAmount(int directiveType, char* string)
@@ -177,7 +228,7 @@ int getMemoryAmount(int directiveType, char* string)
 // Add the following function to your existing Project 2 code
 bool isDataDirective(int directiveType)
 {
-	if(directiveType== 1 || directiveType==6){
+	if(directiveType== BYTE || directiveType==WORD){
 		return true;
 
  }
@@ -213,7 +264,7 @@ int isDirective(char* string) {
 // Add the following function to your existing Project 2 code
 bool isEndDirective(int directiveType)
 {
-	if(directiveType== 2){
+	if(directiveType== END){
 		return true;
 
  }
@@ -226,7 +277,7 @@ bool isEndDirective(int directiveType)
 // Add the following function to your existing Project 2 code
 bool isReserveDirective(int directiveType)
 {
-	if(directiveType== 3 || directiveType==4){
+	if(directiveType==  RESB || directiveType==RESW){
 		return true;
 
  }
@@ -237,7 +288,7 @@ bool isReserveDirective(int directiveType)
 
 bool isStartDirective(int directiveType)
 {
-	if(directiveType== 5){
+	if(directiveType== START){
 		return true;
 
  }

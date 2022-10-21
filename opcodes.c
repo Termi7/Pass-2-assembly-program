@@ -28,6 +28,7 @@ int getOpcodeValue(char* opcode)
 	for( int x = 0; x<OPCODE_ARRAY_SIZE;x++){
 		if(strcmp(opcode,opcodes[x].name) == 0){
 			// printf("%X",opcodes[x].value);
+			// printf("%X", opcodes[x].value);
 			return opcodes[x].value;
 		}		
 	}
