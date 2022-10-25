@@ -47,14 +47,6 @@ int main(int argc, char* argv[])
 				// displaySymbolTable( symbolTable);
 		
 			performPass2(symbolTable,argv[1],&addresses);
-		
-
-      // printf("\n");
-			// printf("Assembly Summary\n");
-      // printf("----------------\n");
-    	// printf("Starting Address: 0x%X\n", addresses.start);
-      // printf("Ending Address: 0x%X\n", addresses.current);
-      // printf("Program Size (bytes):   %d\n", addresses.current -addresses.start);
 		}
 
 	
@@ -272,7 +264,7 @@ void performPass2(struct symbol* symbolTable[], char* filename, address* address
 						writeToLstFile(wptr2,addresses->current,temp1,BLANK_INSTRUCTION);
 						addresses->increment = getMemoryAmount(isDirective(temp1->second), temp1->third);
 						// getMemoryAmount();
-						objectData.recordAddress=addresses->increment;
+						objectData.recordAddress+=addresses->increment;
 
 						}
 			
