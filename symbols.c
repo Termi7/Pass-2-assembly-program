@@ -42,13 +42,10 @@ void displaySymbolTable(struct symbol* symbolTable[])
 int getSymbolAddress(struct symbol* symbolArray[], char* string)
 {
 
-		printf("%s\n", string);
+		// printf("%s\n", string);
   int key1 =computeHash(string);
-	// for (int b =0; b<SYMBOL_TABLE_SIZE; b+=1){
-		// while(symbolArray){
 		 while(symbolArray[key1]!= NULL){
 		if(strcmp(symbolArray[key1]->name, string)==0){
-      //  printf("%X", symbolArray[key1]->address);
 			return symbolArray[key1]->address;
 		}
 		key1+=1;

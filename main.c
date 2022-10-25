@@ -211,9 +211,7 @@ void performPass2(struct symbol* symbolTable[], char* filename, address* address
 	FILE *wptr2;
 	int index=0;
 	ptr1= fopen(filename,"r");
-	// int x = 0 ;
-	// int typeDirective=0;
-	// printf("here I am");
+	
 
 	if(!ptr1){
 		// printf("File Not found");
@@ -221,21 +219,12 @@ void performPass2(struct symbol* symbolTable[], char* filename, address* address
 		exit(1);
 	}
 	else{
-//  printf("here I am");
-//  printf("%s", c);
-//  printf("%s", n);
 		wptr1 = fopen(c,"w");
 		wptr2 = fopen(n,"w");
    
 	 	int i = 0;
-		// printf("Hash Table Log\n");
-		// printf("--------------\n");
+		
 		while ( fgets(buffer, INPUT_BUF_SIZE, ptr1)){
-
-			// char *p = strstr(buffer,"\r");
-			//  if(p!=NULL){
-			// buffer[(int)(p-buffer)]='\0';
-			// }
 
 			 if(buffer[0]=='#'){
 			  continue;
@@ -250,10 +239,7 @@ void performPass2(struct symbol* symbolTable[], char* filename, address* address
 
 				if(isStartDirective(isDirective(temp1->second))){
 			
-       
-				
-				
-				// object->programName= 'xx0';
+      
 				objectData.recordType ='H';
 				strcpy(objectData.programName,temp1->first );
 				// objectData->programName=temp1->first;
@@ -304,9 +290,10 @@ void performPass2(struct symbol* symbolTable[], char* filename, address* address
 							}
 							getByteWordValue(isDirective(temp1->second), temp1->third);
              objectData.recordEntries->numBytes= addresses->increment;
-							objectData.recordEntries->value = getByteWordValue(isDirective(temp1->second), temp1->third);
+
+							 objectData.recordEntries[objectData.recordEntryCount].value = getByteWordValue(isDirective(temp1->second), temp1->third);
 							objectData.recordEntryCount+=1;
-							objectData.recordByteCount+=1;
+							objectData.recordByteCount+=addresses->increment;
 							// objectData.recordType='T';
 ///
 							writeToLstFile(wptr2, addresses->current, temp1, getByteWordValue(isDirective(temp1->second), temp1->third));
@@ -362,8 +349,9 @@ void performPass2(struct symbol* symbolTable[], char* filename, address* address
 
 
 					}
-					objectData.recordEntries->numBytes= 3;
-					objectData.recordEntries->value=vic;
+					
+					objectData.recordEntries[objectData.recordEntryCount].numBytes= 3;
+					objectData.recordEntries[objectData.recordEntryCount].value=vic;
 					objectData.recordEntryCount+= 1;
 					objectData.recordByteCount+=3;
 					// objectData.recordType='T';
@@ -471,24 +459,35 @@ fprintf(file, "%-8X %-8s %-8s %-8s %06X \n", address,segments->first,segments->s
 // Add the following function to your existing Project 2 code
 void writeToObjFile(FILE* file, objectFileData fileData)
 {
+	int x;
 	// printf("%c\n",fileData.recordType);
 	switch (fileData.recordType)
 	{
 	case 'H':
 	    fprintf(file, "%c%s  %06X%06X \n", 'H',fileData.programName, fileData.startAddress, fileData.programSize);
 		break;
-	// case 'T':
-	//  fprintf(file, "%-6c %-6X %-6X", 'T',fileData.recordAddress,fileData.recordByteCount);
+	case 'T':
+	//  fprintf(file, "%c%06X%06X \n", 'T',fileData.recordAddress,fileData.recordByteCount);
+	  fprintf(file, "%c%06X%02X", 'T',fileData.recordAddress,fileData.recordByteCount);
 
-	//  for(int x=0; x<INPUT_BUF_SIZE;x+=1){
-		
-	// 	fprintf(file, "\r%X \n", fileData.recordEntries[x].value);
-	//  }
-	// //  fprintf(file, "%s\n", " ");
-	// 	break;
+     for (int x = 0  ; x<fileData.recordEntryCount;x++){
+
+			if(fileData.recordEntries[x].value <= 1000 && fileData.recordEntries[x].value!=0 && fileData.recordEntries[x].value!=3 ){
+
+				fprintf(file, "%02X", fileData.recordEntries[x].value);
+			}
+			else{
+
+				// printf("%X\n", fileData.recordEntries[x].value);
+				// 	printf("%X\n", fileData.recordEntries[x].numBytes);
+fprintf(file, "%06X", fileData.recordEntries[x].value);
+		 }
+		 }
+		 fprintf(file, "\n");
+		break;
   case'E':
 
-	 fprintf(file, "%c00%-6X ", 'E',fileData.startAddress);
+	 fprintf(file, "%c00%-6X \n", 'E',fileData.startAddress);
 	break;
 	
 	}
