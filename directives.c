@@ -19,34 +19,16 @@ int getByteWordValue(int directiveType, char* string)
 		/* code */
 
 		if(strchr(string, 'X')!=NULL){
-			//  long c = strtol(string, NULL, 16);
-
 				int number1;
 				char val1[10]="";
 			for(int x= 2; x<strlen(string);x++){
 						
 
 						if(strcmp(&string[x],"'")!=0){
-
-							// sprintf(hex, "%X", countV);
-							// printf("%s\n",hex);
-
-						 
-							
-							// count+=1;
 							strcat(val1, &string[x]);
 							// string[x];
 							 number1 = strtol(val1, NULL, 16);
 
-							
-
-							
-			
-		
-			// number1 = (int)strtol(string, NULL, 16);
-			// printf("%s\n", string);
-			// printf("%X", number1);
-			//  sprintf(buf,"%X", c);
 
 						}
 			return number1;
