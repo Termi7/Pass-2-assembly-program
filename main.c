@@ -233,19 +233,6 @@ void performPass2(struct symbol* symbolTable[], char* filename, address* address
 
 				if(isStartDirective(isDirective(temp1->second))){
 
-
-
-					/////
-
-				
-				// objectData.startAddress=startAdress;
-				// objectData.recordAddress= startAdress;
-				// objectData.programSize= addresses->current - startAdress;
-
-				// addresses->current = startAdress;
-					//////
-			
-      
 				objectData.recordType ='H';
 				strcpy(objectData.programName,temp1->first );
 				objectData.startAddress=startAdress;
@@ -340,21 +327,12 @@ void performPass2(struct symbol* symbolTable[], char* filename, address* address
 						 string[lenghtVal-2]='\0';
 
 						
-					
-
-						// vic +=(getSymbolAddress(symbolTable, string) 1000);
 						vic +=getSymbolAddress(symbolTable, string);
 
 
 
-							printf("%X", getSymbolAddress(symbolTable, string));
-// ///dddd
-// 						if(vic >1000){
-// vic=vic-1000;
-// 						}
+							// printf("%X", getSymbolAddress(symbolTable, string));
 
-						///dd
-						
 						
 
 						/////
@@ -377,19 +355,10 @@ void performPass2(struct symbol* symbolTable[], char* filename, address* address
 						}
 						vic+=(getSymbolAddress(symbolTable, temp1->third) -0x1000);
 
-						
-// 						if(vic >1000){
-// vic=vic-1000;
-// 						}
-
-						//////////
+				
 					
 
-						// objectData.modificationEntries[objectData.modificationCount]=  objectData.recordEntries[objectData.recordByteCount].value;
-						// objectData.modificationCount+=1;
-						// printf("%X\n",objectData.recordEntries[objectData.recordByteCount].value);
-
-
+						
 					}
 					
 					objectData.recordEntries[objectData.recordEntryCount].numBytes= 3;
@@ -511,7 +480,7 @@ fprintf(file, "%-8X %-8s %-8s %-8s %06X \n", address,segments->first,segments->s
 	void writeToObjFile(FILE* file, objectFileData fileData)
 {
 	int x;
-	printf("%c\n",fileData.recordType);
+	// printf("%c\n",fileData.recordType);
 	switch (fileData.recordType)
 	{
 	case 'H':
@@ -552,11 +521,8 @@ fprintf(file, "%06X", fileData.recordEntries[x].value);
 	for (int x = 0  ; x<fileData.modificationCount;x++){
 
 	fprintf(file, "%c%06X%s%s%s\n", 'M',fileData.modificationEntries[x],"04","+", fileData.programName);
-	// printf("%X\n",fileData.modificationEntries[x] );
-	// fprintf(file, "%06X",fileData.modificationEntries[x]);
-
+	
 	}
-	// fprintf(file, "%X%s%s\n",04,"+", fileData.programName);
 
 	break;
 
