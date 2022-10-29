@@ -196,6 +196,7 @@ void performPass2(struct symbol* symbolTable[], char* filename, address* address
 		// printf("here I am"); 
 	char* c =createFilename(filename, ".obj");
 	char* n =createFilename(filename, ".lst");
+	int startAdress= 0x0000;
 	// printf("here I am");
 
 	FILE *ptr1;
@@ -225,21 +226,20 @@ void performPass2(struct symbol* symbolTable[], char* filename, address* address
       //  objectFileData *object ;
 			segment *temp1 = prepareSegments(buffer);
 			objectData.recordType='T';
+			startAdress =0x0000;
 
 			if((isDirective(temp1->second)!=0)){
 		
 
 				if(isStartDirective(isDirective(temp1->second))){
-			
-      
+
 				objectData.recordType ='H';
 				strcpy(objectData.programName,temp1->first );
-				// objectData->programName=temp1->first;
-				objectData.startAddress=addresses->start;
-				objectData.recordAddress= addresses->start;
-				objectData.programSize= addresses->current - addresses->start;
+				objectData.startAddress=startAdress;
+				objectData.recordAddress= startAdress;
+				objectData.programSize= addresses->current - startAdress;
 
-				addresses->current = addresses->start;
+				addresses->current = startAdress;
 				writeToObjFile(wptr1, objectData);
 				writeToLstFile( wptr2,addresses->current,temp1,BLANK_INSTRUCTION);
 				}
@@ -249,7 +249,12 @@ void performPass2(struct symbol* symbolTable[], char* filename, address* address
 
 						writeToObjFile(wptr1, objectData);
 					resetObjectFileData(&objectData, addresses);
+
 					}
+
+						objectData.recordType='M';
+						writeToObjFile(wptr1, objectData);
+
 						objectData.recordType='E';
 						writeToObjFile(wptr1, objectData);
 						writeToLstFile(wptr2,addresses->current,temp1, BLANK_INSTRUCTION);
@@ -264,6 +269,7 @@ void performPass2(struct symbol* symbolTable[], char* filename, address* address
 						writeToLstFile(wptr2,addresses->current,temp1,BLANK_INSTRUCTION);
 						addresses->increment = getMemoryAmount(isDirective(temp1->second), temp1->third);
 						// getMemoryAmount();
+						
 						objectData.recordAddress+=addresses->increment;
 
 						}
@@ -272,6 +278,7 @@ void performPass2(struct symbol* symbolTable[], char* filename, address* address
 
 					if(isDataDirective(isDirective(temp1->second))){
             addresses->increment = getMemoryAmount(isDirective(temp1->second), temp1->third);
+						// printf("%x\n",addresses->increment);
 						  if( objectData.recordByteCount >(MAX_RECORD_BYTE_COUNT- addresses->increment)){
 								writeToObjFile(wptr1, objectData);
 								resetObjectFileData(&objectData, addresses);
@@ -281,7 +288,9 @@ void performPass2(struct symbol* symbolTable[], char* filename, address* address
 
 							}
 							getByteWordValue(isDirective(temp1->second), temp1->third);
-             objectData.recordEntries->numBytes= addresses->increment;
+
+							// printf("%x\n",addresses->increment);
+             objectData.recordEntries[objectData.recordEntryCount].numBytes= addresses->increment;
 
 							 objectData.recordEntries[objectData.recordEntryCount].value = getByteWordValue(isDirective(temp1->second), temp1->third);
 							objectData.recordEntryCount+=1;
@@ -322,9 +331,19 @@ void performPass2(struct symbol* symbolTable[], char* filename, address* address
 						 string[lenghtVal-2]='\0';
 
 						
-						// printf("%s", string);
-
 						vic +=getSymbolAddress(symbolTable, string);
+
+
+
+							// printf("%X", getSymbolAddress(symbolTable, string));
+
+						
+
+						/////
+							objectData.modificationEntries[objectData.modificationCount]= addresses->current+ 1 ;
+						objectData.modificationCount+=1;
+
+
 
 
 
@@ -336,10 +355,14 @@ void performPass2(struct symbol* symbolTable[], char* filename, address* address
 
 							displayError(UNDEFINED_SYMBOL, temp1->third);
 							exit(1);
+							
 						}
-						vic+=getSymbolAddress(symbolTable, temp1->third);
+						vic+=(getSymbolAddress(symbolTable, temp1->third) -0x1000);
 
+				
+					
 
+						
 					}
 					
 					objectData.recordEntries[objectData.recordEntryCount].numBytes= 3;
@@ -347,6 +370,14 @@ void performPass2(struct symbol* symbolTable[], char* filename, address* address
 					objectData.recordEntryCount+= 1;
 					objectData.recordByteCount+=3;
 					// objectData.recordType='T';
+
+
+
+				if(getSymbolAddress(symbolTable, temp1->third)!=-1  && (strcmp(temp1->second, "RSUB")!=0)){
+					objectData.modificationEntries[objectData.modificationCount]= addresses->current+ 1 ;
+						objectData.modificationCount+=1;
+						// printf("%X\n",objectData.recordEntries[objectData.recordByteCount].value);
+	}
 
           writeToLstFile(wptr2, addresses->current, temp1, vic);
 
@@ -415,48 +446,49 @@ void writeToLstFile(FILE* file, int address, segment* segments, int opcode)
 	if(isDirective(segments->second)){
     if((isStartDirective(isDirective(segments->second))) || (isReserveDirective(isDirective(segments->second)))){
 
-fprintf(file, "%-8X %-8s %-8s %-8s \n", address,segments->first,segments->second, segments->third);
+fprintf(file, "%04X    %-8s %-8s %-8s \n", address,segments->first,segments->second, segments->third);
 		}
 		else if(isEndDirective(isDirective(segments->second))){
 
-			fprintf(file, "%-8X %-8s %-8s %-8s", address,segments->first,segments->second, segments->third);
+			fprintf(file, "%04X    %-8s %-8s %-8s", address,segments->first,segments->second, segments->third);
 		}
 
 		else if(isDataDirective(isDirective(segments->second))){
 			if(strcmp(segments->second, "WORD")==0){
 
-fprintf(file, "%-8X %-8s %-8s %-8s %06X \n", address,segments->first,segments->second, segments->third, opcode);
+fprintf(file, "%04X    %-8s %-8s %-8s  %06X \n", address,segments->first,segments->second, segments->third, opcode);
 		}
 		else {
 
 			if(opcode<10){
 
-fprintf(file, "%-8X %-8s %-8s %-8s %02X \n", address,segments->first,segments->second, segments->third, opcode);
+fprintf(file, "%04X    %-8s %-8s %-8s  %02X \n", address,segments->first,segments->second, segments->third, opcode);
 
 			}
 			else{
-			fprintf(file, "%-8X %-8s %-8s %-8s %-6X \n", address,segments->first,segments->second, segments->third, opcode);
+			fprintf(file, "%04X    %-8s %-8s %-8s  %-6X \n", address,segments->first,segments->second, segments->third, opcode);
 			}
 		}
 		}
 	}
 
 	if(isOpcode(segments->second)){
-fprintf(file, "%-8X %-8s %-8s %-8s %06X \n", address,segments->first,segments->second, segments->third, opcode);
+fprintf(file, "%04X    %-8s %-8s %-8s  %06X \n", address,segments->first,segments->second, segments->third, opcode);
 
 	}
 }
 
-// To implement Pass 2 of the assembler for Project 3,
-// Add the following function to your existing Project 2 code
-void writeToObjFile(FILE* file, objectFileData fileData)
+
+
+
+	void writeToObjFile(FILE* file, objectFileData fileData)
 {
 	int x;
 	// printf("%c\n",fileData.recordType);
 	switch (fileData.recordType)
 	{
 	case 'H':
-	    fprintf(file, "%c%s  %06X%06X \n", 'H',fileData.programName, fileData.startAddress, fileData.programSize);
+	    fprintf(file, "%c%s  %06X%06X \n", 'H',fileData.programName, fileData.startAddress, fileData.programSize-0x1000);
 		break;
 	case 'T':
 	//  fprintf(file, "%c%06X%06X \n", 'T',fileData.recordAddress,fileData.recordByteCount);
@@ -464,7 +496,11 @@ void writeToObjFile(FILE* file, objectFileData fileData)
 
      for (int x = 0  ; x<fileData.recordEntryCount;x++){
 
-			if(fileData.recordEntries[x].value <= 1000 && fileData.recordEntries[x].value!=0 && fileData.recordEntries[x].value!=3 ){
+			// printf("%x\n",fileData.recordEntries[x].numBytes);
+
+      if(fileData.recordEntries[x].numBytes<3){
+			// if(fileData.recordEntries[x].value<= 1000  && fileData.recordEntries[x].value!=0 && fileData.recordEntries[x].value!=3 && fileData.recordEntries[x].value!=  0X2D && fileData.recordEntries[x].value!= 0X2A ){
+				// if(fileData.recordEntries[x].value == 0xF1 && fileData.recordEntries[x].value== 0x05){
 
 				fprintf(file, "%02X", fileData.recordEntries[x].value);
 			}
@@ -479,8 +515,24 @@ fprintf(file, "%06X", fileData.recordEntries[x].value);
 		break;
   case'E':
 
-	 fprintf(file, "%c00%-6X \n", 'E',fileData.startAddress);
+	 fprintf(file, "%c%06X \n", 'E',fileData.startAddress);
 	break;
+
+
+
+
+	case 'M':
+
+
+	
+	// fprintf(file, "%c", 'M');
+	for (int x = 0  ; x<fileData.modificationCount;x++){
+
+	fprintf(file, "%c%06X%s%s%s\n", 'M',fileData.modificationEntries[x],"04","+", fileData.programName);
 	
 	}
+
+	break;
+
+	} 
 }

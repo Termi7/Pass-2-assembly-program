@@ -35,7 +35,7 @@ void displayError(int errorType, char* errorInfo)
     break;
   case UNDEFINED_SYMBOL:
  
-    printf("Symbol Name (%s) Not Defined in Pass 1.\n", errorInfo);
+    printf("Error: Symbol Name (%s) Not Defined in Pass 1.\n", errorInfo);
     break;
   
   
