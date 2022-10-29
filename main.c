@@ -269,6 +269,7 @@ void performPass2(struct symbol* symbolTable[], char* filename, address* address
 						writeToLstFile(wptr2,addresses->current,temp1,BLANK_INSTRUCTION);
 						addresses->increment = getMemoryAmount(isDirective(temp1->second), temp1->third);
 						// getMemoryAmount();
+						
 						objectData.recordAddress+=addresses->increment;
 
 						}
@@ -277,6 +278,7 @@ void performPass2(struct symbol* symbolTable[], char* filename, address* address
 
 					if(isDataDirective(isDirective(temp1->second))){
             addresses->increment = getMemoryAmount(isDirective(temp1->second), temp1->third);
+						// printf("%x\n",addresses->increment);
 						  if( objectData.recordByteCount >(MAX_RECORD_BYTE_COUNT- addresses->increment)){
 								writeToObjFile(wptr1, objectData);
 								resetObjectFileData(&objectData, addresses);
@@ -286,7 +288,9 @@ void performPass2(struct symbol* symbolTable[], char* filename, address* address
 
 							}
 							getByteWordValue(isDirective(temp1->second), temp1->third);
-             objectData.recordEntries->numBytes= addresses->increment;
+
+							// printf("%x\n",addresses->increment);
+             objectData.recordEntries[objectData.recordEntryCount].numBytes= addresses->increment;
 
 							 objectData.recordEntries[objectData.recordEntryCount].value = getByteWordValue(isDirective(temp1->second), temp1->third);
 							objectData.recordEntryCount+=1;
@@ -442,34 +446,34 @@ void writeToLstFile(FILE* file, int address, segment* segments, int opcode)
 	if(isDirective(segments->second)){
     if((isStartDirective(isDirective(segments->second))) || (isReserveDirective(isDirective(segments->second)))){
 
-fprintf(file, "%-8X %-8s %-8s %-8s \n", address,segments->first,segments->second, segments->third);
+fprintf(file, "%04X    %-8s %-8s %-8s \n", address,segments->first,segments->second, segments->third);
 		}
 		else if(isEndDirective(isDirective(segments->second))){
 
-			fprintf(file, "%-8X %-8s %-8s %-8s", address,segments->first,segments->second, segments->third);
+			fprintf(file, "%04X    %-8s %-8s %-8s", address,segments->first,segments->second, segments->third);
 		}
 
 		else if(isDataDirective(isDirective(segments->second))){
 			if(strcmp(segments->second, "WORD")==0){
 
-fprintf(file, "%-8X %-8s %-8s %-8s %06X \n", address,segments->first,segments->second, segments->third, opcode);
+fprintf(file, "%04X    %-8s %-8s %-8s  %06X \n", address,segments->first,segments->second, segments->third, opcode);
 		}
 		else {
 
 			if(opcode<10){
 
-fprintf(file, "%-8X %-8s %-8s %-8s %02X \n", address,segments->first,segments->second, segments->third, opcode);
+fprintf(file, "%04X    %-8s %-8s %-8s  %02X \n", address,segments->first,segments->second, segments->third, opcode);
 
 			}
 			else{
-			fprintf(file, "%-8X %-8s %-8s %-8s %-6X \n", address,segments->first,segments->second, segments->third, opcode);
+			fprintf(file, "%04X    %-8s %-8s %-8s  %-6X \n", address,segments->first,segments->second, segments->third, opcode);
 			}
 		}
 		}
 	}
 
 	if(isOpcode(segments->second)){
-fprintf(file, "%-8X %-8s %-8s %-8s %06X \n", address,segments->first,segments->second, segments->third, opcode);
+fprintf(file, "%04X    %-8s %-8s %-8s  %06X \n", address,segments->first,segments->second, segments->third, opcode);
 
 	}
 }
@@ -492,7 +496,11 @@ fprintf(file, "%-8X %-8s %-8s %-8s %06X \n", address,segments->first,segments->s
 
      for (int x = 0  ; x<fileData.recordEntryCount;x++){
 
-			if(fileData.recordEntries[x].value <= 1000 && fileData.recordEntries[x].value!=0 && fileData.recordEntries[x].value!=3 && fileData.recordEntries[x].value!=  0X2D ){
+			// printf("%x\n",fileData.recordEntries[x].numBytes);
+
+      if(fileData.recordEntries[x].numBytes<3){
+			// if(fileData.recordEntries[x].value<= 1000  && fileData.recordEntries[x].value!=0 && fileData.recordEntries[x].value!=3 && fileData.recordEntries[x].value!=  0X2D && fileData.recordEntries[x].value!= 0X2A ){
+				// if(fileData.recordEntries[x].value == 0xF1 && fileData.recordEntries[x].value== 0x05){
 
 				fprintf(file, "%02X", fileData.recordEntries[x].value);
 			}
