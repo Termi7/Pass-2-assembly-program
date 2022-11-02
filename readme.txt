@@ -8,17 +8,3 @@ to make sure no new symbol is introduced. You have to keep track of the opcode v
 on your display. Your program will output two files one will display a list file with all different address values, symbols, codes, and opcode values
 and the other one will display the object code.
 
-Extra credit:
-Yes I completed the extra credits
-
-Experience: 
-I had a lot of fun doing this project since it was a complement to the project we
-did before. I learned a lot throughout the process like writing to a file and how to use advanced strings manipulation in C
-doing the object code file was not easy since it require a lot of detail.
-
-Shortcomings:
-No shortcomings
-
-Improvements: 
-For Improvements, I will try to make my code more efficient to run faster
-But other than that I did finish everything.
